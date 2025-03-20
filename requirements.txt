@@ -1,0 +1,6 @@
+Requirements: 
+pandas
+numpy
+prophet (previously fbprophet)
+matplotlib (for ploting, could be omitted)
+fastapi (for the endpoint implementation, not fully working)
