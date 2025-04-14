@@ -44,68 +44,19 @@ X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
 y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
 
 
-# # ---------------------------
-# # 3. GAN Setup
-# # ---------------------------
-# latent_dim = 16
-# condition_dim = X_train.shape[1]
-# output_dim = 1
-
-# class Generator(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.model = nn.Sequential(
-#             nn.Linear(latent_dim + condition_dim, 64),
-#             nn.ReLU(),
-#             nn.Linear(64, output_dim),
-#             nn.Sigmoid()
-#         )
-#     def forward(self, z, cond):
-#         x = torch.cat((z, cond), dim=1)
-#         return self.model(x)
-
-# class Discriminator(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.model = nn.Sequential(
-#             nn.Linear(condition_dim + output_dim, 64),
-#             nn.ReLU(),
-#             nn.Linear(64, 1),
-#             nn.Sigmoid()
-#         )
-#     def forward(self, demand, cond):
-#         x = torch.cat((demand, cond), dim=1)
-#         return self.model(x)
-
-# G = Generator()
-# D = Discriminator()
-
-# g_opt = optim.Adam(G.parameters(), lr=0.0002)
-# d_opt = optim.Adam(D.parameters(), lr=0.0002)
-# criterion = nn.BCELoss()
-
-
 # ---------------------------
-# 3. DEEPER GAN SETUP
+# 3. GAN Setup
 # ---------------------------
-latent_dim = 32
+latent_dim = 16
 condition_dim = X_train.shape[1]
 output_dim = 1
 
-# Change Tahn back to ReLU
 class Generator(nn.Module):
     def __init__(self):
         super().__init__()
         self.model = nn.Sequential(
-            nn.Linear(latent_dim + condition_dim, 128),
+            nn.Linear(latent_dim + condition_dim, 64),
             nn.ReLU(),
-            nn.BatchNorm1d(128),
-            nn.Linear(128, 128),
-            nn.ReLU(),
-            nn.BatchNorm1d(128),
-            nn.Linear(128, 64),
-            nn.Tanh(),
-            nn.Dropout(0.2),
             nn.Linear(64, output_dim),
             nn.Sigmoid()
         )
@@ -117,12 +68,8 @@ class Discriminator(nn.Module):
     def __init__(self):
         super().__init__()
         self.model = nn.Sequential(
-            nn.Linear(condition_dim + output_dim, 128),
-            nn.LeakyReLU(0.2),
-            nn.Dropout(0.3),
-            nn.Linear(128, 64),
-            nn.LeakyReLU(0.2),
-            nn.Dropout(0.3),
+            nn.Linear(condition_dim + output_dim, 64),
+            nn.ReLU(),
             nn.Linear(64, 1),
             nn.Sigmoid()
         )
@@ -136,6 +83,59 @@ D = Discriminator()
 g_opt = optim.Adam(G.parameters(), lr=0.0002)
 d_opt = optim.Adam(D.parameters(), lr=0.0002)
 criterion = nn.BCELoss()
+
+
+# # ---------------------------
+# # 3. DEEPER GAN SETUP
+# # ---------------------------
+# latent_dim = 32
+# condition_dim = X_train.shape[1]
+# output_dim = 1
+
+# # Change Tahn back to ReLU
+# class Generator(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.model = nn.Sequential(
+#             nn.Linear(latent_dim + condition_dim, 128),
+#             nn.ReLU(),
+#             nn.BatchNorm1d(128),
+#             nn.Linear(128, 128),
+#             nn.ReLU(),
+#             nn.BatchNorm1d(128),
+#             nn.Linear(128, 64),
+#             nn.Tanh(),
+#             nn.Dropout(0.2),
+#             nn.Linear(64, output_dim),
+#             nn.Sigmoid()
+#         )
+#     def forward(self, z, cond):
+#         x = torch.cat((z, cond), dim=1)
+#         return self.model(x)
+
+# class Discriminator(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.model = nn.Sequential(
+#             nn.Linear(condition_dim + output_dim, 128),
+#             nn.LeakyReLU(0.2),
+#             nn.Dropout(0.3),
+#             nn.Linear(128, 64),
+#             nn.LeakyReLU(0.2),
+#             nn.Dropout(0.3),
+#             nn.Linear(64, 1),
+#             nn.Sigmoid()
+#         )
+#     def forward(self, demand, cond):
+#         x = torch.cat((demand, cond), dim=1)
+#         return self.model(x)
+
+# G = Generator()
+# D = Discriminator()
+
+# g_opt = optim.Adam(G.parameters(), lr=0.0001)
+# d_opt = optim.Adam(D.parameters(), lr=0.0001)
+# criterion = nn.BCELoss()
 
 # ---------------------------
 # 4. Train GAN with Validation
@@ -221,29 +221,29 @@ plt.tight_layout()
 plt.grid(True)
 plt.show()
 
-# ---------------------------
-# 7a. Plot Actual vs Simulated Demand Over Time
-# ---------------------------
-df_compare = pd.DataFrame({
-    'ds': ds_test.values,
-    'Actual_Demand': test_true,
-    'Simulated_Demand': test_pred
-})
-df_compare = df_compare.sort_values('ds')
+# # ---------------------------
+# # 7. Plot Actual vs Simulated Demand Over Time
+# # ---------------------------
+# df_compare = pd.DataFrame({
+#     'ds': ds_test.values,
+#     'Actual_Demand': test_true,
+#     'Simulated_Demand': test_pred
+# })
+# df_compare = df_compare.sort_values('ds')
 
-plt.figure(figsize=(14, 6))
-sns.lineplot(data=df_compare, x='ds', y='Actual_Demand', label='Actual Demand')
-sns.lineplot(data=df_compare, x='ds', y='Simulated_Demand', label='Simulated Demand (GAN)', linestyle='--')
-plt.title("Actual vs Simulated Mobility Demand Over Time (Test Set)")
-plt.xlabel("Date")
-plt.ylabel("Demand")
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+# plt.figure(figsize=(14, 6))
+# sns.lineplot(data=df_compare, x='ds', y='Actual_Demand', label='Actual Demand')
+# sns.lineplot(data=df_compare, x='ds', y='Simulated_Demand', label='Simulated Demand (GAN)', linestyle='--')
+# plt.title("Actual vs Simulated Mobility Demand Over Time (Test Set)")
+# plt.xlabel("Date")
+# plt.ylabel("Demand")
+# plt.legend()
+# plt.grid(True)
+# plt.tight_layout()
+# plt.show()
 
 # ---------------------------
-# 7b. Simulate & Compare Demand Under Different Scenarios
+# 7. Simulate & Compare Demand Under Different Scenarios
 # ---------------------------
 
 def simulate_demand(G, scaler_X, scaler_y, base_df, scenario_mods, scenario_names, latent_dim=16):
