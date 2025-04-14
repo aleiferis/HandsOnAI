@@ -76,6 +76,7 @@
 	The dataset was extended to hourly frequency:
 	ex1/hourly.py # modified code to produce the same data as exercise 1 but with hourly frequency
 		new file data full_forecast_hourly.csv
+		trafic_congestions distribution was replaced with lognormal which is righ-skewed
 
 	The code now uses a Generative Adversarial Network (GAN) to simulate hourly mobility data: 
 		The generator learns to produce realistic mobility patterns.

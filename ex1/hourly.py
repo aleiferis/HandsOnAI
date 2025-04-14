@@ -29,7 +29,13 @@ precipitation[date_rng.month.isin([6, 7, 8])] *= 0.2  # Less in summer
 
 # Simulate additional factors
 green_initiatives = np.random.choice([0, 1], size=hours, p=[0.99, 0.01])  # Less frequent per hour
-traffic_congestion = np.random.uniform(0, 100, size=hours)
+
+# Inject skewed traffic congestion values using a log-normal distribution
+mu = 0.5   # mean of the log of the variable
+sigma = 0.75  # standard deviation (controls skewness)
+size = hours
+traffic_congestion = np.random.lognormal(mean=mu, sigma=sigma, size=size)
+
 bike_lane_availability = np.random.choice([0, 1], size=hours, p=[0.95, 0.05])
 fuel_prices = 2.5 + np.random.normal(0, 0.1, size=hours)
 public_transport_fares = 1.5 + np.random.normal(0, 0.05, size=hours)
