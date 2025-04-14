@@ -42,19 +42,68 @@ X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
 y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
 
 
+# # ---------------------------
+# # 3. GAN Setup
+# # ---------------------------
+# latent_dim = 16
+# condition_dim = X_train.shape[1]
+# output_dim = 1
+
+# class Generator(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.model = nn.Sequential(
+#             nn.Linear(latent_dim + condition_dim, 64),
+#             nn.ReLU(),
+#             nn.Linear(64, output_dim),
+#             nn.Sigmoid()
+#         )
+#     def forward(self, z, cond):
+#         x = torch.cat((z, cond), dim=1)
+#         return self.model(x)
+
+# class Discriminator(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.model = nn.Sequential(
+#             nn.Linear(condition_dim + output_dim, 64),
+#             nn.ReLU(),
+#             nn.Linear(64, 1),
+#             nn.Sigmoid()
+#         )
+#     def forward(self, demand, cond):
+#         x = torch.cat((demand, cond), dim=1)
+#         return self.model(x)
+
+# G = Generator()
+# D = Discriminator()
+
+# g_opt = optim.Adam(G.parameters(), lr=0.0002)
+# d_opt = optim.Adam(D.parameters(), lr=0.0002)
+# criterion = nn.BCELoss()
+
+
 # ---------------------------
-# 3. GAN Setup
+# 3. DEEPER GAN SETUP
 # ---------------------------
-latent_dim = 16
+latent_dim = 32
 condition_dim = X_train.shape[1]
 output_dim = 1
 
+# Change Tahn back to ReLU
 class Generator(nn.Module):
     def __init__(self):
         super().__init__()
         self.model = nn.Sequential(
-            nn.Linear(latent_dim + condition_dim, 64),
+            nn.Linear(latent_dim + condition_dim, 128),
             nn.ReLU(),
+            nn.BatchNorm1d(128),
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.BatchNorm1d(128),
+            nn.Linear(128, 64),
+            nn.Tanh(),
+            nn.Dropout(0.2),
             nn.Linear(64, output_dim),
             nn.Sigmoid()
         )
@@ -66,8 +115,12 @@ class Discriminator(nn.Module):
     def __init__(self):
         super().__init__()
         self.model = nn.Sequential(
-            nn.Linear(condition_dim + output_dim, 64),
-            nn.ReLU(),
+            nn.Linear(condition_dim + output_dim, 128),
+            nn.LeakyReLU(0.2),
+            nn.Dropout(0.3),
+            nn.Linear(128, 64),
+            nn.LeakyReLU(0.2),
+            nn.Dropout(0.3),
             nn.Linear(64, 1),
             nn.Sigmoid()
         )
@@ -81,59 +134,6 @@ D = Discriminator()
 g_opt = optim.Adam(G.parameters(), lr=0.0002)
 d_opt = optim.Adam(D.parameters(), lr=0.0002)
 criterion = nn.BCELoss()
-
-
-# # ---------------------------
-# # 3. DEEPER GAN SETUP
-# # ---------------------------
-# latent_dim = 32
-# condition_dim = X_train.shape[1]
-# output_dim = 1
-
-# # Change Tahn back to ReLU
-# class Generator(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.model = nn.Sequential(
-#             nn.Linear(latent_dim + condition_dim, 128),
-#             nn.ReLU(),
-#             nn.BatchNorm1d(128),
-#             nn.Linear(128, 128),
-#             nn.ReLU(),
-#             nn.BatchNorm1d(128),
-#             nn.Linear(128, 64),
-#             nn.Tanh(),
-#             nn.Dropout(0.2),
-#             nn.Linear(64, output_dim),
-#             nn.Sigmoid()
-#         )
-#     def forward(self, z, cond):
-#         x = torch.cat((z, cond), dim=1)
-#         return self.model(x)
-
-# class Discriminator(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.model = nn.Sequential(
-#             nn.Linear(condition_dim + output_dim, 128),
-#             nn.LeakyReLU(0.2),
-#             nn.Dropout(0.3),
-#             nn.Linear(128, 64),
-#             nn.LeakyReLU(0.2),
-#             nn.Dropout(0.3),
-#             nn.Linear(64, 1),
-#             nn.Sigmoid()
-#         )
-#     def forward(self, demand, cond):
-#         x = torch.cat((demand, cond), dim=1)
-#         return self.model(x)
-
-# G = Generator()
-# D = Discriminator()
-
-# g_opt = optim.Adam(G.parameters(), lr=0.0001)
-# d_opt = optim.Adam(D.parameters(), lr=0.0001)
-# criterion = nn.BCELoss()
 
 # ---------------------------
 # 4. Train GAN with Validation

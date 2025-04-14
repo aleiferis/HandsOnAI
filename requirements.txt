@@ -1,9 +1,17 @@
-Requirements: 
-    pandas
-    numpy
-    prophet
-    matplotlib
-    fastapi
-    sqlalchemy
-    scikit-learn
-    seaborn
+pandas
+numpy
+prophet
+matplotlib
+fastapi
+sqlalchemy
+scikit-learn
+seaborn
+scipy
+torch
+torchvision
+torchaudio
+pillow
+tqdm
+tensorflow 
+tensorflow-macos 
+tensorflow-metal
