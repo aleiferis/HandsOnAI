@@ -1,7 +1,9 @@
 Requirements: 
     pandas
     numpy
-    prophet (previously fbprophet)
-    matplotlib (for ploting, could be omitted)
-    fastapi (for the endpoint implementation, not fully working)
-    sqlalchemy (for the postgresql connection)
+    prophet
+    matplotlib
+    fastapi
+    sqlalchemy
+    scikit-learn
+    seaborn
