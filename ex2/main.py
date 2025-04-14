@@ -19,6 +19,34 @@ df = pd.read_csv("../full_forecast_hourly.csv")
 df.columns = [col.replace('_yhat', '') for col in df.columns]
 df['ds'] = pd.to_datetime(df['ds'])
 
+# Mean imputation for all features except datetime
+imputed_df = df.copy()
+for col in imputed_df.columns[1:]:
+    imputed_df[col] = imputed_df[col].fillna(imputed_df[col].mean())
+df = imputed_df
+
+# ---------------------------
+# 1b Identify and remove outliers using IQR
+# ---------------------------
+def remove_outliers_iqr(df, columns):
+    df_clean = df.copy()
+    for col in columns:
+        Q1 = df_clean[col].quantile(0.05)
+        Q3 = df_clean[col].quantile(0.95)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        # Remove rows outside bounds
+        df_clean = df_clean[(df_clean[col] >= lower_bound) & (df_clean[col] <= upper_bound)]
+    return df_clean
+
+# Identify numeric columns to check (excluding 'ds')
+numeric_cols = df.columns.difference(['ds'])
+df = remove_outliers_iqr(df, numeric_cols)
+
+print(f"Data shape after outlier removal: {df.shape}")
+
+
 feature_cols = df.columns.difference(['ds', 'y'])
 target_col = 'y'
 
@@ -183,7 +211,7 @@ model_dir = "saved_model"
 os.makedirs(model_dir, exist_ok=True)
 
 # Save generator model
-torch.save(G.state_dict(), os.path.join(model_dir, "generator_model.pkl"))
+torch.save(G.state_dict(), os.path.join(model_dir, "generator_model.pth"))
 
 # Save scalers
 with open(os.path.join(model_dir, "scaler_X.pkl"), 'wb') as f:
