@@ -157,3 +157,48 @@
 	4. Study Fare Price Sensitivity
 	5. Weather Resilience Planning
 	6. Event Impact Analysis
+
+
+
+# HandsOnAI Exercise 3
+
+	The available data for mobility were unreliable, so I used household power consumption data that I'm familiar with from another Smart Energy Project. 
+
+	The data are available from the UR Irvine Machine Learning Repository.
+
+	Highlights:
+	Data source: UCI Household Power Consumption
+	New features: hour, is_weekend, moving average
+	Outlier removal: IQR method
+	Feature selection: RFE + tree importance
+	Modeling: RandomForestRegressor
+	Visuals: t-SNE and forecast plot
+
+
+	Enhanced GAN-based power consumption modeling script: 
+		Hyperparameter tuning (latent_dim, hidden_size, learning_rate)
+		Performance metrics: MAE, RMSE, R²
+		Visualizations:
+			Learning curves (MAE vs Epochs)
+			Residual plot (Predicted vs Actual)
+			Feature importance (from surrogate model)
+			ROC curve (converted to classification for anomaly detection context)
+
+
+
+
+	$ cd ex3
+
+	# Create virtual environment 
+	python3 -m venv .venv
+	source .venv/bin/activate
+	pip install -U pip
+	pip install -r ../requirements.txt
+	python3 getdata.py
+	python3 main.py
+
+
+
+
+
+
